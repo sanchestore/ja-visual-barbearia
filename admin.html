@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Painel do barbeiro — J.A Visual</title>
+<meta name="theme-color" content="#0d0d0e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230d0d0e'/><text x='32' y='43' font-family='Georgia' font-weight='900' font-size='30' fill='%23efe6d6' text-anchor='middle'>JA</text><rect x='6' y='52' width='52' height='5' fill='%23c4161c'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0e;--ink-2:#161618;--ink-3:#212124;--line:#2c2c30;--cream:#efe6d6;--cream-2:#e4d8c3;--red:#c4161c;--red-2:#e0262d;--blue:#1d3f8f;--blue-2:#2d58c4;--muted:#9b958b;--ok:#2fa65a;--warn:#e0a325;
+--display:"Ultra",Georgia,serif;--label:"Oswald","Arial Narrow",sans-serif;--body:"Barlow",system-ui,sans-serif;
+--pole:repeating-linear-gradient(-45deg,var(--red) 0 14px,#fff 14px 28px,var(--blue) 28px 42px,#fff 42px 56px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.45;min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit}
+.label{font-family:var(--label);text-transform:uppercase;letter-spacing:.13em;font-size:12px;color:var(--muted)}
+.poleline{height:6px;background:var(--pole);background-size:79px 79px;animation:pole 3s linear infinite}
+@keyframes pole{to{background-position:79px 0}}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{width:min(380px,100%);background:var(--ink-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.login-card .in{padding:30px 26px}
+.login-card h1{font-family:var(--display);font-weight:400;font-size:34px;line-height:1;margin:8px 0 22px}
+.campo label{display:block;font-family:var(--label);text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--muted);margin-bottom:6px}
+.campo input,.campo select{width:100%;background:var(--ink-3);border:1.5px solid var(--line);border-radius:6px;padding:12px;color:var(--cream);font:inherit;outline:none}
+.campo input:focus,.campo select:focus{border-color:var(--cream-2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--label);font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:14px;padding:13px 20px;border-radius:5px;text-decoration:none}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-2)}
+.btn-ghost{border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--cream-2)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.erro{color:#ff8a8f;font-size:14px;min-height:20px;margin-top:10px}
+.dica{margin-top:16px;padding:10px 12px;border:1px dashed var(--line);border-radius:6px;font-size:13.5px;color:var(--muted)}
+
+/* app */
+#app{display:none}
+header{position:sticky;top:0;z-index:20;background:rgba(13,13,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .in{max-width:1100px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px}
+header h1{font-family:var(--display);font-weight:400;font-size:20px;line-height:1}
+header h1 small{display:block;font-family:var(--label);font-size:11px;letter-spacing:.2em;color:var(--muted);margin-top:3px}
+header .sp{flex:1}
+.tabs{max-width:1100px;margin:0 auto;padding:0 18px;display:flex;gap:4px;overflow-x:auto}
+.tabs button{padding:12px 14px;font-family:var(--label);text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--cream);border-color:var(--red)}
+main{max-width:1100px;margin:0 auto;padding:22px 18px 80px}
+.aba{display:none}.aba.on{display:block}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kpi{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi b{display:block;font-family:var(--display);font-weight:400;font-size:28px;line-height:1.1;margin-top:6px}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi.dest{border-color:#5a2326;background:linear-gradient(180deg,rgba(196,22,28,.14),transparent)}
+
+.dias{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px}
+.dia{flex:0 0 66px;border:1.5px solid var(--line);border-radius:8px;padding:8px 4px;text-align:center;background:var(--ink-2);position:relative}
+.dia .ds{font-family:var(--label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dia .dn{font-family:var(--display);font-size:22px}
+.dia .q{position:absolute;top:-7px;right:-5px;background:var(--red);color:#fff;font-size:11px;font-family:var(--label);min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+.dia.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.dia.on .ds{color:#4b463e}
+.dia.off{opacity:.35}
+
+.dia-head{display:flex;justify-content:space-between;align-items:flex-end;margin:6px 0 12px;gap:10px;flex-wrap:wrap}
+.dia-head h2{font-family:var(--display);font-weight:400;font-size:26px}
+.timeline{display:grid;gap:10px}
+.ag{display:grid;grid-template-columns:74px 1fr auto;gap:14px;align-items:center;background:var(--ink-2);border:1px solid var(--line);border-left:5px solid var(--warn);border-radius:8px;padding:14px}
+.ag.confirmado{border-left-color:var(--blue-2)}
+.ag.concluido{border-left-color:var(--ok);opacity:.75}
+.ag.faltou{border-left-color:#555;opacity:.6}
+.ag.bloq{border-left-color:#555;background:repeating-linear-gradient(-45deg,var(--ink-2) 0 10px,#1b1b1e 10px 20px)}
+.ag .h{font-family:var(--label);font-size:22px;line-height:1}
+.ag .h small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.ag .n{font-weight:700;font-size:17px}
+.ag .s{color:var(--cream-2);font-size:14.5px}
+.ag .m{font-size:13px;color:var(--muted);margin-top:3px}
+.pill{display:inline-block;font-family:var(--label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-left:6px;vertical-align:2px}
+.pill.pendente{background:#4a3a10;color:#ffd27a}
+.pill.confirmado{background:#16264f;color:#9db8ff}
+.pill.concluido{background:#123620;color:#83e0a4}
+.pill.faltou{background:#333;color:#aaa}
+.acoes{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ic{border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--label);font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;text-decoration:none}
+.ic:hover{border-color:var(--cream-2)}
+.ic.zap{border-color:#185c33;color:#7ee3a5}
+.ic.ok{border-color:#1d5a35}
+.ic.del{color:#ff8a8f;border-color:#5a2326}
+.vazio{padding:30px;text-align:center;border:1px dashed var(--line);border-radius:10px;color:var(--muted)}
+.livres{margin-top:16px}
+.livres .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{border:1px dashed var(--line);border-radius:5px;padding:6px 10px;font-family:var(--label);font-size:14px;color:var(--muted)}
+.chip:hover{border-color:var(--cream-2);color:var(--cream)}
+
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:16px}
+.card h3{font-family:var(--label);text-transform:uppercase;letter-spacing:.1em;font-size:16px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.servs{display:flex;flex-wrap:wrap;gap:8px}
+.serv{border:1.5px solid var(--line);border-radius:6px;padding:9px 12px;font-size:14.5px}
+.serv.on{border-color:var(--red);background:rgba(196,22,28,.16)}
+.horas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.hora{border:1.5px solid var(--line);border-radius:5px;padding:8px 12px;font-family:var(--label);font-size:15px}
+.hora.on{background:var(--red);border-color:var(--red);color:#fff}
+.sug{background:var(--ink-3);border:1px solid var(--line);border-radius:6px;margin-top:6px;max-height:220px;overflow:auto}
+.sug button{display:block;width:100%;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:15px}
+.sug button:hover{background:#2a2a2e}
+.lista-cli{display:grid;gap:8px}
+.cli{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--ink-3);border-radius:8px;padding:12px 14px}
+.cli b{display:block}
+.cli span{font-size:13px;color:var(--muted)}
+.extras li{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.on{display:flex}
+.modal .box{width:min(420px,100%);background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:22px}
+.modal h3{font-family:var(--display);font-weight:400;font-size:24px;margin-bottom:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--cream);color:var(--ink);padding:12px 18px;border-radius:6px;font-weight:600;z-index:60;opacity:0;transition:.25s;max-width:92vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.demo{background:#2a2410;color:#ffd27a;text-align:center;font-size:13px;padding:6px;font-family:var(--label);letter-spacing:.08em}
+
+@media(max-width:760px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .ag{grid-template-columns:62px 1fr}
+  .acoes{grid-column:1/-1;justify-content:flex-start}
+  .grid2,.grid3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-card">
+    <div class="poleline"></div>
+    <form class="in" id="f-login">
+      <span class="label">J.A Visual Barbearia</span>
+      <h1>Painel do<br>barbeiro</h1>
+      <div class="campo"><label for="senha">Senha</label><input type="password" id="senha" autocomplete="current-password" autofocus></div>
+      <button class="btn btn-red" style="width:100%;margin-top:14px" id="b-entrar">Entrar</button>
+      <div class="erro" id="l-erro"></div>
+      <div class="dica" id="dica-demo" hidden>Versão de apresentação · senha: <b id="senha-demo"></b></div>
+      <a href="index.html" class="label" style="display:block;text-align:center;margin-top:18px">← Voltar ao site</a>
+    </form>
+  </div>
+</div>
+
+<div id="app">
+  <div class="demo" id="demo-aviso" hidden>VERSÃO DE APRESENTAÇÃO — dados de exemplo salvos só neste aparelho</div>
+  <header>
+    <div class="in">
+      <h1>J.A VISUAL<small>PAINEL DO BARBEIRO</small></h1>
+      <span class="sp"></span>
+      <a class="btn btn-ghost" href="index.html" target="_blank" style="padding:9px 12px;font-size:12px">Ver site</a>
+      <button class="btn btn-ghost" id="b-sair" style="padding:9px 12px;font-size:12px">Sair</button>
+    </div>
+    <nav class="tabs">
+      <button data-aba="agenda" class="on">Agenda</button>
+      <button data-aba="novo">+ Encaixe</button>
+      <button data-aba="bloq">Bloqueios e extras</button>
+      <button data-aba="clientes">Clientes</button>
+      <button data-aba="config">Ajustes</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- AGENDA -->
+    <section class="aba on" id="aba-agenda">
+      <div class="kpis">
+        <div class="kpi dest"><span>Hoje</span><b id="k-hq">–</b><span id="k-hq2"></span></div>
+        <div class="kpi"><span>Previsto hoje</span><b id="k-hv">–</b><span>em atendimentos</span></div>
+        <div class="kpi"><span>Semana</span><b id="k-sq">–</b><span id="k-sq2"></span></div>
+        <div class="kpi"><span>Recebido na semana</span><b id="k-sv">–</b><span>concluídos</span></div>
+      </div>
+      <div class="dias" id="dias"></div>
+      <div class="dia-head">
+        <div><span class="label" id="d-sub"></span><h2 id="d-tit"></h2></div>
+        <button class="btn btn-red" style="padding:10px 14px;font-size:12px" onclick="abrirAba('novo')">+ Encaixe neste dia</button>
+      </div>
+      <div class="timeline" id="timeline"></div>
+      <div class="livres" id="livres"></div>
+    </section>
+
+    <!-- NOVO -->
+    <section class="aba" id="aba-novo">
+      <div class="card">
+        <h3>Agendar para o cliente</h3>
+        <div class="grid2">
+          <div class="campo" style="position:relative"><label>Nome</label><input id="n-nome" placeholder="Digite para buscar cliente salvo" autocomplete="off"><div class="sug" id="n-sug" hidden></div></div>
+          <div class="campo"><label>WhatsApp</label><input id="n-tel" inputmode="tel" placeholder="(19) 9 0000-0000"></div>
+        </div>
+        <p class="label" style="margin:18px 0 8px">Serviços</p>
+        <div class="servs" id="n-servs"></div>
+        <div class="grid3" style="margin-top:16px">
+          <div class="campo"><label>Data</label><input type="date" id="n-data"></div>
+          <div class="campo"><label>Duração (min)</label><input type="number" id="n-dur" min="15" step="15" value="30"></div>
+          <div class="campo"><label>Valor</label><input id="n-val" disabled></div>
+        </div>
+        <p class="label" style="margin:16px 0 0">Horários livres</p>
+        <div class="horas" id="n-horas"><span class="label">Escolha os serviços e a data</span></div>
+        <button class="btn btn-red" style="margin-top:18px;width:100%" id="n-salvar" disabled>Agendar</button>
+      </div>
+    </section>
+
+    <!-- BLOQUEIOS -->
+    <section class="aba" id="aba-bloq">
+      <div class="card">
+        <h3>Bloquear horário</h3>
+        <p style="color:var(--muted);font-size:14.5px;margin:-6px 0 14px">Almoço, folga, compromisso — o site deixa de oferecer esse período.</p>
+        <div class="grid2">
+          <div class="campo"><label>Data</label><input type="date" id="b-data"></div>
+          <div class="campo"><label>Motivo</label><input id="b-mot" placeholder="Almoço"></div>
+          <div class="campo"><label>Das</label><input type="time" id="b-ini" value="12:00" step="900"></div>
+          <div class="campo"><label>Até</label><input type="time" id="b-fim" value="13:00" step="900"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button class="btn btn-red" id="b-salvar">Bloquear</button>
+          <button class="btn btn-ghost" id="b-dia">Bloquear o dia inteiro</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Abrir horário extra</h3>
+        <p style="color:var(--muted);font-size:14.5px;margin:-6px 0 14px">Ex.: domingo antes de feriado, ou ficar até mais tarde num dia.</p>
+        <div class="grid3">
+          <div class="campo"><label>Data</label><input type="date" id="e-data"></div>
+          <div class="campo"><label>Das</label><input type="time" id="e-ini" value="19:00" step="900"></div>
+          <div class="campo"><label>Até</label><input type="time" id="e-fim" value="21:00" step="900"></div>
+        </div>
+        <button class="btn btn-red" style="margin-top:14px" id="e-salvar">Abrir horário</button>
+        <ul class="extras" id="e-lista" style="margin-top:14px"></ul>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="aba" id="aba-clientes">
+      <div class="card">
+        <h3>Clientes salvos</h3>
+        <div class="campo"><input id="c-busca" placeholder="Buscar por nome ou telefone"></div>
+        <p class="label" id="c-total" style="margin:12px 0"></p>
+        <div class="lista-cli" id="c-lista"></div>
+      </div>
+    </section>
+
+    <!-- CONFIG -->
+    <section class="aba" id="aba-config">
+      <div class="card">
+        <h3>Trocar senha do painel</h3>
+        <div class="grid2"><div class="campo"><label>Nova senha</label><input type="password" id="s-nova"></div></div>
+        <button class="btn btn-red" style="margin-top:14px" id="s-salvar">Salvar senha</button>
+      </div>
+      <div class="card">
+        <h3>Horário de funcionamento</h3>
+        <div id="cfg-hor" style="color:var(--cream-2);font-size:15px"></div>
+        <p style="color:var(--muted);font-size:13.5px;margin-top:10px">Para mudar, ajuste em agenda.js (e no Apps Script quando a agenda estiver ligada).</p>
+      </div>
+      <div class="card" id="card-demo" hidden>
+        <h3>Apresentação</h3>
+        <p style="color:var(--muted);font-size:14.5px;margin-bottom:12px">Apaga os agendamentos de teste e volta aos dados de exemplo.</p>
+        <button class="btn btn-ghost" id="r-demo">Restaurar dados de exemplo</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="mod-rem">
+  <div class="box">
+    <h3>Remarcar</h3>
+    <p class="label" id="r-quem" style="margin-bottom:14px"></p>
+    <div class="campo"><label>Nova data</label><input type="date" id="r-data"></div>
+    <div class="horas" id="r-horas" style="margin-top:10px"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-ghost" style="flex:1" id="r-fechar">Voltar</button>
+      <button class="btn btn-red" style="flex:1" id="r-salvar" disabled>Salvar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="agenda.js"></script>
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+let SENHA = "";
+const call = (acao, corpo) => api(acao, Object.assign({ senha: SENHA }, corpo || {}));
+function toast(m){ const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 2800); }
+const zap = (tel, txt) => "https://wa.me/55" + soDigitos(tel).replace(/^55(?=\d{10,11}$)/,"") + (txt ? "?text=" + encodeURIComponent(txt) : "");
+function mascara(el){ el.addEventListener("input", () => { let d = soDigitos(el.value).slice(0,11); el.value = d.length > 10 ? `(${d.slice(0,2)}) ${d.slice(2,3)} ${d.slice(3,7)}-${d.slice(7)}` : d.length > 6 ? `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}` : d.length > 2 ? `(${d.slice(0,2)}) ${d.slice(2)}` : d; }); }
+const telFmt = t => { const d = soDigitos(t); return d.length === 11 ? `(${d.slice(0,2)}) ${d.slice(2,3)} ${d.slice(3,7)}-${d.slice(7)}` : d; };
+
+/* ---------- login ---------- */
+if(MODO_DEMO){ $("#dica-demo").hidden = false; $("#senha-demo").textContent = SENHA_DEMO; $("#demo-aviso").hidden = false; $("#card-demo").hidden = false; }
+async function entrar(s, silencioso){
+  SENHA = s;
+  const b = $("#b-entrar"); b.disabled = true; b.textContent = "Entrando…";
+  try{
+    const r = await call("login");
+    if(!r.ok){ SENHA = ""; sessionStorage.removeItem("jav_pro"); if(!silencioso) $("#l-erro").textContent = r.erro || "Senha incorreta."; return; }
+    sessionStorage.setItem("jav_pro", s);
+    $("#login").style.display = "none"; $("#app").style.display = "block";
+    iniciar();
+  }catch(e){ if(!silencioso) $("#l-erro").textContent = "Sem conexão. Tente de novo."; }
+  finally{ b.disabled = false; b.textContent = "Entrar"; }
+}
+$("#f-login").onsubmit = e => { e.preventDefault(); const s = $("#senha").value; if(s) entrar(s, false); };
+$("#b-sair").onclick = () => { sessionStorage.removeItem("jav_pro"); location.reload(); };
+try{ const s = sessionStorage.getItem("jav_pro"); if(s) entrar(s, true); }catch(e){}
+
+/* ---------- abas ---------- */
+function abrirAba(n){
+  $$(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.aba === n));
+  $$(".aba").forEach(a => a.classList.toggle("on", a.id === "aba-" + n));
+  if(n === "novo"){ $("#n-data").value = diaSel; carregarHorasNovo(); }
+  if(n === "clientes") buscarClientes();
+  if(n === "bloq"){ $("#b-data").value = diaSel; $("#e-data").value = diaSel; listarExtras(); }
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+$$(".tabs button").forEach(b => b.onclick = () => abrirAba(b.dataset.aba));
+
+/* ---------- agenda ---------- */
+let diaSel = hojeISO(), cache = [];
+async function iniciar(){
+  $$('input[type=date]').forEach(i => i.min = hojeISO());
+  $("#cfg-hor").innerHTML = [1,2,3,4,5,6,0].map(d => `${["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"][d]}: <b>${HORARIOS[d] ? HORARIOS[d].join(" – ") : "fechado"}</b>`).join("<br>");
+  desenharServsNovo();
+  await recarregar();
+  setInterval(recarregar, 60000);
+}
+async function recarregar(){
+  const [l, rs] = await Promise.all([ call("pro_listar", { dias: 14 }), call("resumo") ]);
+  if(l.ok) cache = l.agendamentos;
+  if(rs.ok){
+    $("#k-hq").textContent = rs.hoje.qtd; $("#k-hq2").textContent = rs.hoje.concluidos + " concluído(s)";
+    $("#k-hv").textContent = reais(rs.hoje.valor);
+    $("#k-sq").textContent = rs.semana.qtd; $("#k-sq2").textContent = "atendimentos marcados";
+    $("#k-sv").textContent = reais(rs.semana.valorConcluido);
+  }
+  desenharDias(); desenharDia();
+}
+function desenharDias(){
+  let h = "";
+  for(let i = 0; i < 14; i++){
+    const iso = addDias(hojeISO(), i), d = diaSemana(iso);
+    const q = cache.filter(a => a.data === iso && !a.bloqueio).length;
+    h += `<button class="dia ${iso===diaSel?'on':''} ${HORARIOS[d]?'':'off'}" data-d="${iso}"><div class="ds">${i===0?'Hoje':DIAS_CURTO[d]}</div><div class="dn">${iso.slice(8)}</div>${q?`<span class="q">${q}</span>`:''}</button>`;
+  }
+  $("#dias").innerHTML = h;
+  $$("#dias .dia").forEach(b => b.onclick = () => { diaSel = b.dataset.d; desenharDias(); desenharDia(); });
+}
+async function desenharDia(){
+  const d = diaSemana(diaSel);
+  $("#d-tit").textContent = (diaSel === hojeISO() ? "Hoje, " : "") + DIAS_LONGO[d] + " " + dataBR(diaSel).slice(0,5);
+  const lista = cache.filter(a => a.data === diaSel).sort((x,y) => x.hora.localeCompare(y.hora));
+  const total = lista.filter(a => !a.bloqueio && a.status !== "faltou").reduce((s,a) => s + a.total, 0);
+  $("#d-sub").textContent = HORARIOS[d] ? `${HORARIOS[d].join(" – ")} · ${lista.filter(a=>!a.bloqueio).length} cliente(s) · ${reais(total)} previsto` + (ehFeriado(diaSel) ? " · feriado" : "") : "Fechado" + (lista.length ? " (com horário extra)" : "");
+  const tl = $("#timeline");
+  if(!lista.length) tl.innerHTML = `<div class="vazio">Nenhum horário marcado ${diaSel === hojeISO() ? "hoje" : "nesse dia"} ainda.</div>`;
+  else tl.innerHTML = "";
+  lista.forEach(a => {
+    const fim = hhmm(minutos(a.hora) + a.duracao);
+    const el = document.createElement("div");
+    if(a.bloqueio){
+      el.className = "ag bloq";
+      el.innerHTML = `<div class="h">${a.hora}<small>até ${fim}</small></div><div><div class="n">${a.nome || a.titulo}</div></div><div class="acoes"><button class="ic del" data-x="del">Desbloquear</button></div>`;
+    }else{
+      el.className = "ag " + a.status;
+      el.innerHTML = `<div class="h">${a.hora}<small>até ${fim}</small></div>
+        <div><div class="n">${a.nome}<span class="pill ${a.status}">${{pendente:"a confirmar",confirmado:"confirmado",concluido:"atendido",faltou:"faltou"}[a.status]||a.status}</span></div><div class="s">${a.servicos.join(" + ")} · <b>${reais(a.total)}</b></div><div class="m">${telFmt(a.tel)}${a.origem === "painel" ? " · encaixe" : " · pelo site"}</div></div>
+        <div class="acoes">
+          <a class="ic zap" target="_blank" rel="noopener" href="${zap(a.tel, a.status === "pendente" ? `Fala, ${a.nome.split(" ")[0]}! Confirmado seu horário na J.A Visual: ${DIAS_LONGO[diaSemana(a.data)]}, ${dataBR(a.data)} às ${a.hora} (${a.servicos.join(" + ")}). Até lá! 💈` : `Fala, ${a.nome.split(" ")[0]}! Passando pra lembrar do seu horário na J.A Visual: ${dataBR(a.data)} às ${a.hora}. 💈`)}">WhatsApp</a>
+          ${a.status === "pendente" ? '<button class="ic" data-x="confirmado">Confirmar</button>' : ""}
+          ${a.status !== "concluido" ? '<button class="ic ok" data-x="concluido">✓ Atendido</button>' : '<button class="ic" data-x="confirmado">Desfazer</button>'}
+          ${a.status !== "concluido" && a.status !== "faltou" ? '<button class="ic" data-x="faltou">Faltou</button>' : ""}
+          <button class="ic" data-x="rem">Remarcar</button>
+          <button class="ic del" data-x="del">Cancelar</button>
+        </div>`;
+    }
+    el.querySelectorAll("[data-x]").forEach(b => b.onclick = () => acao(a, b.dataset.x, b));
+    tl.appendChild(el);
+  });
+  // horários vagos para encaixe
+  const lv = $("#livres");
+  const r = await call("pro_horarios", { data: diaSel, duracao: 30 });
+  if(r.ok && r.horarios.length){
+    lv.innerHTML = `<span class="label">Vagos (30 min) · toque para encaixar</span><div class="chips">${r.horarios.map(h => `<button class="chip" data-h="${h}">${h}</button>`).join("")}</div>`;
+    lv.querySelectorAll(".chip").forEach(c => c.onclick = () => { abrirAba("novo"); horaNovo = c.dataset.h; carregarHorasNovo(); });
+  } else lv.innerHTML = "";
+}
+async function acao(a, x, btn){
+  if(x === "rem") return abrirRemarcar(a);
+  if(x === "del"){
+    if(btn.dataset.c !== "1"){ btn.dataset.c = "1"; btn.textContent = "Confirmar?"; setTimeout(() => { btn.dataset.c = ""; btn.textContent = a.bloqueio ? "Desbloquear" : "Cancelar"; }, 3500); return; }
+    const r = await call("pro_cancelar", { id: a.id });
+    toast(r.ok ? (a.bloqueio ? "Horário liberado." : "Agendamento cancelado.") : r.erro);
+    return recarregar();
+  }
+  const r = await call("pro_status", { id: a.id, status: x });
+  if(!r.ok) return toast(r.erro);
+  toast({ confirmado:"Confirmado ✓", concluido:"Atendimento concluído 💈", faltou:"Marcado como falta." }[x]);
+  recarregar();
+}
+
+/* remarcar */
+let remAg = null, remHora = "";
+function abrirRemarcar(a){
+  remAg = a; remHora = "";
+  $("#r-quem").textContent = `${a.nome} · ${a.servicos.join(" + ")} · ${dataBR(a.data)} ${a.hora}`;
+  $("#r-data").value = a.data; $("#r-salvar").disabled = true;
+  $("#r-fechar").textContent = "Voltar"; $("#mod-rem").classList.add("on"); horasRem();
+}
+async function horasRem(){
+  const box = $("#r-horas"); box.innerHTML = '<span class="label">Buscando…</span>';
+  const r = await call("pro_horarios", { data: $("#r-data").value, duracao: remAg.duracao, ignorar: remAg.id });
+  if(!r.ok || !r.horarios.length){ box.innerHTML = '<span class="label">Sem horários livres</span>'; return; }
+  box.innerHTML = r.horarios.map(h => `<button class="hora" data-h="${h}">${h}</button>`).join("");
+  box.querySelectorAll(".hora").forEach(b => b.onclick = () => { remHora = b.dataset.h; box.querySelectorAll(".hora").forEach(x => x.classList.toggle("on", x === b)); $("#r-salvar").disabled = false; });
+}
+$("#r-data").onchange = horasRem;
+$("#r-fechar").onclick = () => $("#mod-rem").classList.remove("on");
+$("#r-salvar").onclick = async () => {
+  const r = await call("pro_remarcar", { id: remAg.id, data: $("#r-data").value, hora: remHora });
+  if(!r.ok) return toast(r.erro);
+  const a = remAg, nd = $("#r-data").value;
+  $("#r-horas").innerHTML = `<div style="width:100%"><p style="margin:6px 0 12px">Remarcado para <b>${dataBR(nd)} às ${remHora}</b> ✓</p>${a.tel ? `<a class="btn btn-red" style="width:100%" target="_blank" rel="noopener" href="${zap(a.tel, `Fala, ${a.nome.split(" ")[0]}! Seu horário na J.A Visual foi remarcado para ${dataBR(nd)} às ${remHora}. 💈`)}">Avisar cliente no WhatsApp</a>` : ""}</div>`;
+  $("#r-salvar").disabled = true; $("#r-fechar").textContent = "Fechar";
+  diaSel = nd; recarregar();
+};
+
+/* ---------- encaixe ---------- */
+let servsNovo = [], horaNovo = "";
+function desenharServsNovo(){
+  $("#n-servs").innerHTML = Object.keys(SERVICOS).map(n => `<button class="serv ${servsNovo.includes(n)?'on':''}" data-n="${n}">${n}</button>`).join("");
+  $$("#n-servs .serv").forEach(b => b.onclick = () => {
+    const n = b.dataset.n;
+    servsNovo = servsNovo.includes(n) ? servsNovo.filter(x => x !== n) : servsNovo.concat(n);
+    desenharServsNovo();
+    const c = calcular(servsNovo, $("#n-data").value || hojeISO());
+    $("#n-dur").value = c.duracao || 30;
+    carregarHorasNovo();
+  });
+  const c = calcular(servsNovo, $("#n-data").value || hojeISO());
+  $("#n-val").value = reais(c.total);
+}
+async function carregarHorasNovo(){
+  const box = $("#n-horas"), data = $("#n-data").value;
+  $("#n-val").value = reais(calcular(servsNovo, data || hojeISO()).total);
+  validarNovo();
+  if(!data || !servsNovo.length){ box.innerHTML = '<span class="label">Escolha os serviços e a data</span>'; return; }
+  box.innerHTML = '<span class="label">Buscando…</span>';
+  const r = await call("pro_horarios", { data, duracao: Number($("#n-dur").value) || 30 });
+  if(!r.ok || !r.horarios.length){ box.innerHTML = '<span class="label">Sem horários livres nesse dia</span>'; horaNovo = ""; validarNovo(); return; }
+  if(!r.horarios.includes(horaNovo)) horaNovo = "";
+  box.innerHTML = r.horarios.map(h => `<button class="hora ${h===horaNovo?'on':''}" data-h="${h}">${h}</button>`).join("");
+  box.querySelectorAll(".hora").forEach(b => b.onclick = () => { horaNovo = b.dataset.h; box.querySelectorAll(".hora").forEach(x => x.classList.toggle("on", x === b)); validarNovo(); });
+  validarNovo();
+}
+function validarNovo(){ $("#n-salvar").disabled = !($("#n-nome").value.trim() && soDigitos($("#n-tel").value).length >= 10 && servsNovo.length && $("#n-data").value && horaNovo); }
+$("#n-data").onchange = carregarHorasNovo; $("#n-dur").onchange = carregarHorasNovo;
+$("#n-tel").addEventListener("input", validarNovo); mascara($("#n-tel"));
+let tSug;
+$("#n-nome").addEventListener("input", () => {
+  validarNovo(); clearTimeout(tSug);
+  const q = $("#n-nome").value.trim();
+  if(q.length < 2){ $("#n-sug").hidden = true; return; }
+  tSug = setTimeout(async () => {
+    const r = await call("clientes_buscar", { q });
+    if(!r.ok || !r.clientes.length){ $("#n-sug").hidden = true; return; }
+    $("#n-sug").innerHTML = r.clientes.slice(0,6).map((c,i) => `<button data-i="${i}">${c.nome} · <span style="color:var(--muted)">${telFmt(c.tel)}</span></button>`).join("");
+    $("#n-sug").hidden = false;
+    $$("#n-sug button").forEach(b => b.onclick = () => { const c = r.clientes[b.dataset.i]; $("#n-nome").value = c.nome; $("#n-tel").value = telFmt(c.tel); $("#n-sug").hidden = true; validarNovo(); });
+  }, 250);
+});
+$("#n-salvar").onclick = async () => {
+  const b = $("#n-salvar"); b.disabled = true;
+  const data = $("#n-data").value;
+  const r = await call("pro_agendar", { nome: $("#n-nome").value.trim(), telefone: $("#n-tel").value, servicos: servsNovo, data, hora: horaNovo, duracao: Number($("#n-dur").value) });
+  if(!r.ok){ toast(r.erro); b.disabled = false; return carregarHorasNovo(); }
+  toast("Encaixe agendado ✓");
+  $("#n-nome").value = ""; $("#n-tel").value = ""; servsNovo = []; horaNovo = ""; desenharServsNovo();
+  diaSel = data; await recarregar(); abrirAba("agenda");
+};
+
+/* ---------- bloqueios / extras ---------- */
+$("#b-salvar").onclick = async () => {
+  const r = await call("bloquear", { data: $("#b-data").value, ini: $("#b-ini").value, fim: $("#b-fim").value, motivo: $("#b-mot").value || "Bloqueado" });
+  if(!r.ok) return toast(r.erro);
+  toast("Período bloqueado ✓"); diaSel = $("#b-data").value; recarregar();
+};
+$("#b-dia").onclick = async () => {
+  const data = $("#b-data").value, h = HORARIOS[diaSemana(data)];
+  if(!data) return toast("Escolha a data.");
+  if(!h) return toast("Esse dia já é fechado.");
+  const r = await call("bloquear", { data, ini: h[0], fim: h[1], motivo: $("#b-mot").value || "Folga" });
+  if(!r.ok) return toast(r.erro);
+  toast("Dia bloqueado ✓"); diaSel = data; recarregar();
+};
+async function listarExtras(){
+  const r = await call("extras_listar");
+  const l = r.ok ? r.extras : [];
+  $("#e-lista").innerHTML = l.length ? l.map(x => `<li><span>${DIAS_LONGO[diaSemana(x.data)]}, ${dataBR(x.data)} · ${x.ini} – ${x.fim}</span><button class="ic del" data-id="${x.id}">Remover</button></li>`).join("") : '<li class="label">Nenhum horário extra aberto</li>';
+  $$("#e-lista [data-id]").forEach(b => b.onclick = async () => { await call("extras_remover", { id: b.dataset.id }); listarExtras(); recarregar(); });
+}
+$("#e-salvar").onclick = async () => {
+  const r = await call("extras_add", { data: $("#e-data").value, ini: $("#e-ini").value, fim: $("#e-fim").value });
+  if(!r.ok) return toast(r.erro);
+  toast("Horário extra aberto ✓ — já aparece no site"); listarExtras(); recarregar();
+};
+
+/* ---------- clientes ---------- */
+let tCli;
+async function buscarClientes(){
+  const r = await call("clientes_buscar", { q: $("#c-busca").value });
+  if(!r.ok) return;
+  $("#c-total").textContent = r.total + " cliente(s)";
+  $("#c-lista").innerHTML = r.clientes.map(c => `<div class="cli"><div><b>${c.nome}</b><span>${telFmt(c.tel)} · ${c.visitas} agendamento(s) · último ${dataBR(c.ultimo)}</span></div><div class="acoes"><a class="ic zap" target="_blank" rel="noopener" href="${zap(c.tel, `Fala, ${c.nome.split(" ")[0]}! Bora dar aquele trato no visual? Agenda aqui: ${location.href.replace(/admin\.html.*$/,"")}`)}">Chamar</a><button class="ic" data-t="${c.tel}" data-n="${c.nome}">Agendar</button></div></div>`).join("") || '<div class="vazio">Nenhum cliente encontrado.</div>';
+  $$("#c-lista [data-t]").forEach(b => b.onclick = () => { abrirAba("novo"); $("#n-nome").value = b.dataset.n; $("#n-tel").value = telFmt(b.dataset.t); validarNovo(); });
+}
+$("#c-busca").addEventListener("input", () => { clearTimeout(tCli); tCli = setTimeout(buscarClientes, 250); });
+
+/* ---------- ajustes ---------- */
+$("#s-salvar").onclick = async () => {
+  const nova = $("#s-nova").value;
+  const r = await call("trocar_senha", { nova });
+  if(!r.ok) return toast(r.erro);
+  SENHA = nova; sessionStorage.setItem("jav_pro", nova); $("#s-nova").value = ""; toast("Senha alterada ✓");
+};
+$("#r-demo").onclick = () => { demoReset(); sessionStorage.setItem("jav_pro", SENHA_DEMO); location.reload(); };
+</script>
+</body>
+</html>
